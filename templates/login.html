@@ -6,94 +6,28 @@
     <title>Just-In-Site | Uplink</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
-
     <style>
-        /* SPACE THEME */
-        body {
-            background: radial-gradient(circle at center, #2e1065 0%, #0f172a 60%, #020617 100%);
-            color: #e2e8f0;
-            font-family: 'Rajdhani', sans-serif;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* ORBITRON HEADERS */
+        body { background: radial-gradient(circle at center, #2e1065 0%, #0f172a 60%, #020617 100%); color: #e2e8f0; font-family: 'Rajdhani', sans-serif; height: 100vh; overflow: hidden; }
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
-
-        /* GLASS CARD EFFECT */
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            box-shadow: 0 0 40px rgba(139, 92, 246, 0.15);
-        }
-
-        /* NEON GLOW INPUTS */
-        .input-field {
-            background: rgba(2, 6, 23, 0.8);
-            border: 1px solid #4c1d95;
-            color: #a78bfa;
-            transition: all 0.3s ease;
-        }
-        .input-field:focus {
-            outline: none;
-            border-color: #22d3ee; /* Cyan Glow */
-            box-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
-            color: #fff;
-        }
-
-        /* BUTTON ANIMATION */
-        .btn-cyber {
-            background: linear-gradient(90deg, #4c1d95 0%, #2e1065 100%);
-            border: 1px solid #8b5cf6;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-cyber:hover {
-            box-shadow: 0 0 20px #8b5cf6;
-            border-color: #fff;
-        }
-
-        /* STARS ANIMATION (Simulated via CSS dots) */
-        .stars {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image:
-                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
-                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
-                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
-            background-size: 550px 550px, 350px 350px, 250px 250px;
-            background-position: 0 0, 40px 60px, 130px 270px;
-            animation: moveStars 120s linear infinite;
-            z-index: -1;
-            opacity: 0.6;
-        }
-        @keyframes moveStars {
-            from { background-position: 0 0, 40px 60px, 130px 270px; }
-            to { background-position: 550px 550px, 390px 410px, 680px 820px; }
-        }
+        .glass-panel { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(139, 92, 246, 0.3); box-shadow: 0 0 40px rgba(139, 92, 246, 0.15); }
+        .input-field { background: rgba(2, 6, 23, 0.8); border: 1px solid #4c1d95; color: #a78bfa; transition: all 0.3s ease; }
+        .input-field:focus { outline: none; border-color: #22d3ee; box-shadow: 0 0 15px rgba(34, 211, 238, 0.4); color: #fff; }
+        .btn-cyber { background: linear-gradient(90deg, #4c1d95 0%, #2e1065 100%); border: 1px solid #8b5cf6; transition: all 0.3s; }
+        .btn-cyber:hover { box-shadow: 0 0 20px #8b5cf6; border-color: #fff; }
+        .stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px), radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px); background-size: 550px 550px, 350px 350px; background-position: 0 0, 40px 60px; animation: moveStars 120s linear infinite; z-index: -1; opacity: 0.6; }
+        @keyframes moveStars { from { background-position: 0 0, 40px 60px; } to { background-position: 550px 550px, 390px 410px; } }
     </style>
 </head>
 <body class="flex items-center justify-center relative">
-
     <div class="stars"></div>
-
     <div class="glass-panel p-10 rounded-2xl w-full max-w-md relative z-10 mx-4">
-
         <div class="text-center mb-10">
             <i class="fa-solid fa-rocket text-5xl text-cyan-400 mb-4 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]"></i>
-            <h1 class="font-orbitron text-4xl font-black text-white tracking-widest uppercase">
-                JUST-IN-SITE
-            </h1>
-            <p class="text-purple-300 tracking-[0.3em] text-xs font-bold mt-1">OPERATING SYSTEM V7.0</p>
+            <h1 class="font-orbitron text-4xl font-black text-white tracking-widest uppercase">JUST-IN-SITE</h1>
+            <p class="text-purple-300 tracking-[0.3em] text-xs font-bold mt-1">OPERATING SYSTEM V7.1</p>
         </div>
-
         <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-6">
-
             <div>
                 <label class="block text-cyan-500 text-xs font-bold tracking-widest mb-2 uppercase">Operator ID</label>
                 <div class="relative">
@@ -101,7 +35,6 @@
                     <input type="text" id="username" class="input-field w-full py-3 pl-12 pr-4 rounded-lg font-orbitron tracking-wide" placeholder="ENTER ID" required>
                 </div>
             </div>
-
             <div>
                 <label class="block text-cyan-500 text-xs font-bold tracking-widest mb-2 uppercase">Access Key</label>
                 <div class="relative">
@@ -109,22 +42,10 @@
                     <input type="password" id="password" class="input-field w-full py-3 pl-12 pr-4 rounded-lg font-orbitron tracking-wide" placeholder="••••••••" required>
                 </div>
             </div>
-
-            <div id="errorMsg" class="hidden text-red-400 text-sm text-center font-bold tracking-wide border border-red-900 bg-red-900/30 p-2 rounded">
-                <i class="fa-solid fa-triangle-exclamation mr-2"></i> ACCESS DENIED
-            </div>
-
-            <button type="submit" class="btn-cyber w-full py-4 rounded-lg text-white font-orbitron font-bold tracking-[0.2em] text-lg mt-4 shadow-lg">
-                INITIATE UPLINK
-            </button>
-
+            <div id="errorMsg" class="hidden text-red-400 text-sm text-center font-bold tracking-wide border border-red-900 bg-red-900/30 p-2 rounded"><i class="fa-solid fa-triangle-exclamation mr-2"></i> ACCESS DENIED</div>
+            <button type="submit" class="btn-cyber w-full py-4 rounded-lg text-white font-orbitron font-bold tracking-[0.2em] text-lg mt-4 shadow-lg">INITIATE UPLINK</button>
         </form>
-
-        <div class="text-center mt-8 text-xs text-slate-500 font-mono">
-            SECURE CONNECTION // ENCRYPTION: MIL-SPEC
-        </div>
     </div>
-
     <script>
         async function handleLogin(e) {
             e.preventDefault();
@@ -132,27 +53,16 @@
             const pass = document.getElementById('password').value;
             const btn = document.querySelector('button');
             const errorDiv = document.getElementById('errorMsg');
-
-            // Animation State
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> AUTHENTICATING...';
             errorDiv.classList.add('hidden');
-
             try {
                 const response = await fetch('/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username: user, password: pass })
                 });
-
-                if (response.ok) {
-                    window.location.href = "/"; // Redirect to Dashboard
-                } else {
-                    throw new Error("Invalid Credentials");
-                }
-            } catch (err) {
-                btn.innerHTML = 'INITIATE UPLINK';
-                errorDiv.classList.remove('hidden');
-            }
+                if (response.ok) { window.location.href = "/"; } else { throw new Error("Invalid Credentials"); }
+            } catch (err) { btn.innerHTML = 'INITIATE UPLINK'; errorDiv.classList.remove('hidden'); }
         }
     </script>
 </body>

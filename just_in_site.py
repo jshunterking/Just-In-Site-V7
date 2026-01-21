@@ -1,13 +1,11 @@
 """
-JUST-IN-SITE V7.1 | WEB SERVER API + UI
-Full Stack with Job Selection, Clock-Out, and Ticketing.
-
-AUTHOR: Justin (King Kong) & Gemini (The Architect)
+JUST-IN-SITE V7.1 | GOLDEN MASTER ENGINE
+Full Stack: Auth, Logic, UI, and API.
 """
-
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Optional
 
@@ -20,7 +18,7 @@ try:
 except ImportError:
     RabbitTime = None; PantherBrain = None; RabbitPaws = None; RaptorVoice = None
 
-# --- APP SETUP ---
+# --- SETUP ---
 app = FastAPI(title="Just-In-Site V7.1")
 templates = Jinja2Templates(directory="templates")
 
@@ -68,6 +66,7 @@ async def read_root(request: Request):
 # --- AUTH API ---
 @app.post("/auth/login")
 def login(data: LoginRequest, response: Response):
+    # HARDCODED CREDENTIALS
     if data.username.lower() == "justin" and data.password == "admin":
         response.set_cookie(key="access_token", value="v7-secure-uplink", max_age=86400)
         return {"message": "Access Granted"}
@@ -79,10 +78,8 @@ def logout(response: Response):
     return RedirectResponse(url="/login")
 
 # --- DATA API ---
-
 @app.get("/api/jobs")
 def get_jobs():
-    """Returns list of active jobs for the dropdown."""
     return [
         {"id": "JOB-MERCY-001", "name": "Mercy Hospital - ER Reno"},
         {"id": "JOB-STEEL-004", "name": "Cleveland Cliffs - Blast Furnace"},
