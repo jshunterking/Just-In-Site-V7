@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Just-In-Site V7.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #0f172a; color: #e2e8f0; }
+        .card { background-color: #1e293b; border: 1px solid #334155; }
+        .btn-primary { background-color: #3b82f6; }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-danger { background-color: #ef4444; }
+    </style>
+</head>
+<body class="font-sans antialiased">
+
+    <nav class="bg-slate-900 border-b border-slate-700 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-hard-hat text-yellow-500 text-2xl"></i>
+                <span class="text-xl font-bold tracking-tight">JUST-IN-SITE <span class="text-blue-500">V7.0</span></span>
+            </div>
+            <div class="text-xs text-slate-400">
+                <i class="fa-solid fa-wifi text-green-500"></i> ONLINE
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-4 mt-6 max-w-lg">
+
+        <div class="card rounded-xl p-6 mb-6 shadow-lg">
+            <h2 class="text-sm uppercase text-slate-400 font-semibold mb-2">Current Status</h2>
+            <div id="status-display" class="text-2xl font-bold text-white">Checking...</div>
+            <div class="mt-4 text-xs text-slate-500">USER: Justin_Live | JOB: MERCY-001</div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <button onclick="clockIn()" class="card hover:border-blue-500 transition p-6 rounded-xl flex flex-col items-center justify-center space-y-3 group">
+                <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-blue-900 transition">
+                    <i class="fa-solid fa-clock text-blue-400 text-xl"></i>
+                </div>
+                <span class="font-semibold">Clock In</span>
+            </button>
+
+            <button onclick="orderMaterial()" class="card hover:border-green-500 transition p-6 rounded-xl flex flex-col items-center justify-center space-y-3 group">
+                <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-green-900 transition">
+                    <i class="fa-solid fa-box text-green-400 text-xl"></i>
+                </div>
+                <span class="font-semibold">Order Parts</span>
+            </button>
+        </div>
+
+        <div class="card rounded-xl p-6">
+            <h3 class="text-sm font-semibold mb-4 border-b border-slate-700 pb-2">System Logs</h3>
+            <div id="logs" class="space-y-3 text-sm text-slate-300">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                    <span>System initialized...</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const API_URL = window.location.origin; // Auto-detects Railway URL
+        const USER_ID = "Justin_Live";
+        const JOB_ID = "JOB-MERCY-001";
+
+        // 1. Check Status on Load
+        async function checkStatus() {
+            try {
+                const res = await fetch(`${API_URL}/rabbit/status/${USER_ID}`);
+                const data = await res.json();
+                const display = document.getElementById('status-display');
+
+                if (data.status_message.includes("CLOCKED IN")) {
+                    display.innerHTML = '<span class="text-green-400">🟢 Clocked In</span>';
+                } else {
+                    display.innerHTML = '<span class="text-slate-400">🔴 Clocked Out</span>';
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // 2. Clock In Function
+        async function clockIn() {
+            log("Attempting Clock In...");
+            try {
+                const res = await fetch(`${API_URL}/rabbit/clock-in`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: USER_ID,
+                        job_id: JOB_ID,
+                        lat: 41.0995, // Hardcoded Mercy Hospital for demo
+                        lon: -80.6400
+                    })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    log(`✅ Success: ${data.start_time}`);
+                    checkStatus();
+                } else {
+                    const err = await res.json();
+                    log(`❌ Error: ${err.detail}`);
+                }
+            } catch (error) {
+                log("❌ Network Error");
+            }
+        }
+
+        // 3. Mock Material Order
+        function orderMaterial() {
+            alert("Open Camera Scanner? (Feature coming in V7.1)");
+        }
+
+        function log(msg) {
+            const logs = document.getElementById('logs');
+            const entry = document.createElement('div');
+            entry.className = "flex items-center space-x-2 opacity-0 animate-fadeIn";
+            entry.innerHTML = `<span class="text-xs text-slate-500">${new Date().toLocaleTimeString()}</span><span>${msg}</span>`;
+            logs.prepend(entry);
+            // Simple fade in animation via class
+            setTimeout(() => entry.classList.remove('opacity-0'), 50);
+        }
+
+        // Run on load
+        checkStatus();
+    </script>
+</body>
+</html>
