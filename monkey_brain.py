@@ -1,19 +1,11 @@
 """
-MONKEY BRAIN V7.1 (GOLDEN MASTER)
-The Database Connection Module.
+MONKEY BRAIN V8.1 | NEURAL SCHEMA
+The Single Source of Truth for Roles, Inventory, and Assemblies.
 """
 import sqlite3
 import os
 
-# Detect Railway Volume vs Local
-if os.path.exists("/data"):
-    print("🧠 [MONKEY BRAIN] Detected Railway Volume. Using /data/just_in_site.db")
-    DB_FOLDER = "/data"
-else:
-    print("🧠 [MONKEY BRAIN] Local Environment. Using ./just_in_site.db")
-    DB_FOLDER = "."
-
-DB_FILE = os.path.join(DB_FOLDER, "just_in_site.db")
+DB_FILE = os.path.join("/data" if os.path.exists("/data") else ".", "monkey_core.db")
 
 
 class MonkeyBrain:
@@ -27,28 +19,48 @@ class MonkeyBrain:
         conn = self._get_connection()
         cursor = conn.cursor()
 
-        # TIME CLOCK
+        # 1. USER REGISTRY (Multi-Hat Support)
         cursor.execute('''
-            CREATE TABLE IF NOT EXISTS time_clock (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id TEXT NOT NULL,
-                job_id TEXT NOT NULL,
-                start_time TEXT NOT NULL,
-                end_time TEXT,
-                hours REAL,
-                status TEXT DEFAULT 'ACTIVE'
+            CREATE TABLE IF NOT EXISTS users (
+                username TEXT PRIMARY KEY,
+                password TEXT NOT NULL,
+                full_name TEXT,
+                hats TEXT, -- Stored as JSON: ["ADMIN", "PURCHASING"]
+                level INTEGER
             )
         ''')
-        # PURCHASE ORDERS
+
+        # 2. TIME SLIPS (Approval Workflow)
         cursor.execute('''
-            CREATE TABLE IF NOT EXISTS purchase_orders (
+            CREATE TABLE IF NOT EXISTS time_slips (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                po_number TEXT,
+                worker_id TEXT,
                 job_id TEXT,
-                amount REAL,
-                status TEXT
+                hours REAL,
+                status TEXT DEFAULT 'PENDING'
             )
         ''')
+
+        # 3. INVENTORY LEDGER (Job-Tethered)
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS inventory (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                item_name TEXT,
+                job_id TEXT,
+                quantity REAL
+            )
+        ''')
+
+        # 4. ASSEMBLY VAULT (QR Digital Twins)
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS assemblies (
+                qr_id TEXT PRIMARY KEY,
+                assembly_name TEXT,
+                doc_url TEXT,
+                batch_target INTEGER
+            )
+        ''')
+
         conn.commit()
         conn.close()
 
@@ -57,15 +69,13 @@ class MonkeyBrain:
         cursor = conn.cursor()
         cursor.execute(query, params)
         conn.commit()
-        last_id = cursor.lastrowid
         conn.close()
-        return last_id
 
-    def execute_read_one(self, query, params=()):
+    def execute_read(self, query, params=()):
         conn = self._get_connection()
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute(query, params)
-        row = cursor.fetchone()
+        rows = cursor.fetchall()
         conn.close()
-        return dict(row) if row else None
+        return [dict(r) for r in rows]
