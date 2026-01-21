@@ -3,6 +3,11 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from monkey_brain import MonkeyBrain
 
+print("------------------------------------------")
+print("!!! MONKEYS V9.01.FINAL IS NOW LOADING !!!")
+print("!!!    DFNO! BLAST OFF INITIALIZED     !!!")
+print("------------------------------------------")
+
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 brain = MonkeyBrain()
