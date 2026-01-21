@@ -2,137 +2,61 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Just-In-Site | Monkey Core</title>
+    <title>Monkey OS V9.0 | Command Bridge</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { background: #020617; color: #e2e8f0; font-family: 'Rajdhani', sans-serif; overflow: hidden; }
-        .font-orbitron { font-family: 'Orbitron', sans-serif; }
-        .sidebar { background: rgba(10, 10, 25, 0.9); border-right: 2px solid #4c1d95; backdrop-filter: blur(20px); }
-        .glass-card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(139, 92, 246, 0.2); }
-        .nav-item { transition: 0.3s; border-left: 4px solid transparent; }
-        .nav-item:hover { background: rgba(139, 92, 246, 0.1); border-left-color: #22d3ee; }
+        .glass-card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(139, 92, 246, 0.2); backdrop-filter: blur(10px); }
+        .neon-glow { text-shadow: 0 0 10px rgba(34, 211, 238, 0.6); }
+        .sidebar { background: rgba(10, 10, 25, 0.9); border-right: 2px solid #4c1d95; }
     </style>
 </head>
-<body class="flex h-screen">
+<body class="flex h-screen relative">
+
+    <div class="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-xl px-4">
+        <div class="glass-card flex items-center px-6 py-3 rounded-full border-cyan-500/30">
+            <i class="fa-solid fa-brain text-cyan-400 mr-4 animate-pulse"></i>
+            <input type="text" id="mSearch" placeholder="Ask the Monkey..." class="bg-transparent w-full text-white outline-none font-mono text-xs">
+        </div>
+    </div>
 
     <aside class="sidebar w-72 flex-shrink-0 flex flex-col">
-        <div class="p-6 border-b border-purple-900/50">
-            <h1 class="font-orbitron text-xl font-black text-white italic">MONKEY CORE</h1>
-            <p class="text-[0.6rem] text-cyan-400 font-bold tracking-[0.3em]">V8.1 // {{ name }}</p>
+        <div class="p-8 border-b border-purple-900/30">
+            <h1 class="font-orbitron text-xl font-black text-white italic neon-glow">MONKEY OS</h1>
+            <p class="text-[0.6rem] text-cyan-400 font-bold tracking-[0.3em]">V9.0 // ALPHA</p>
         </div>
-
-        <nav class="flex-1 mt-4 overflow-y-auto">
-            {% if 'PREFAB_MANAGER' in hats %}
-            <div class="px-6 py-2 text-[0.6rem] text-purple-400 font-bold uppercase tracking-widest">Prefab Manager</div>
-            <a href="#" onclick="openQrModal()" class="nav-item flex items-center px-6 py-3 space-x-3 text-slate-300">
-                <i class="fa-solid fa-qrcode"></i> <span>QR Neural Linker</span>
-            </a>
-            {% endif %}
-
+        <nav class="flex-1 mt-6 overflow-y-auto">
             {% if 'PURCHASING' in hats %}
-            <div class="px-6 py-2 text-[0.6rem] text-green-400 font-bold uppercase tracking-widest">Purchasing</div>
-            <a href="#" class="nav-item flex items-center px-6 py-3 space-x-3 text-slate-300">
-                <i class="fa-solid fa-cart-shopping"></i> <span>The Buy-Board</span>
+            <div class="px-8 py-2 text-[0.6rem] text-green-400 font-bold uppercase tracking-widest">Purchasing</div>
+            <a href="#" class="flex items-center px-8 py-3 space-x-3 hover:bg-white/5 border-l-4 border-l-transparent hover:border-l-green-500">
+                <i class="fa-solid fa-cart-shopping"></i> <span>Buy-Board</span>
             </a>
             {% endif %}
-
-            {% if 'FIELD_FOREMAN' in hats %}
-            <div class="px-6 py-2 text-[0.6rem] text-cyan-400 font-bold uppercase tracking-widest">Foreman Tools</div>
-            <a href="#" class="nav-item flex items-center px-6 py-3 space-x-3 text-slate-300">
-                <i class="fa-solid fa-clipboard-check"></i> <span>Time Approvals</span>
-            </a>
-            {% endif %}
-        </nav>
-
-        <div class="p-6 bg-slate-950/50 border-t border-purple-900/50">
-            <a href="/auth/logout" class="block w-full text-center py-2 rounded border border-red-500/50 text-red-500 font-bold text-xs uppercase tracking-widest font-orbitron">Sever Link</a>
-        </div>
+            </nav>
     </aside>
 
-    <main class="flex-1 overflow-y-auto p-10">
-        <header class="mb-10 flex justify-between items-end">
-            <div>
-                <h2 class="text-4xl font-orbitron font-black text-white tracking-tighter uppercase">Unified Command</h2>
-                <p class="text-cyan-400/70 font-mono text-xs italic">Clearance Level: {{ level }} // Alpha Matrix Active</p>
-            </div>
-            <div class="glass-card px-4 py-2 rounded-full border-green-500/40 flex items-center space-x-2">
-                <i class="fa-solid fa-signal text-green-400"></i>
-                <span class="text-[0.6rem] text-green-400 font-bold uppercase tracking-widest">Neural Stability: 100%</span>
-            </div>
-        </header>
-
-        <div class="grid grid-cols-12 gap-6">
-            <div class="col-span-12 lg:col-span-4 glass-card rounded-2xl p-8 flex flex-col items-center justify-center">
-                <h3 class="font-orbitron text-[0.6rem] text-cyan-400 tracking-[0.3em] mb-6 uppercase">Speak-to-Adjust</h3>
-                <button id="micBtn" onmousedown="startMic()" onmouseup="stopMic()" class="w-24 h-24 rounded-full bg-slate-900 border-2 border-cyan-500/50 flex items-center justify-center shadow-[0_0_20px_rgba(34,211,238,0.2)]">
-                    <i id="micIcon" class="fa-solid fa-microphone text-3xl text-cyan-400"></i>
-                </button>
-                <div id="vStatus" class="mt-4 text-[0.6rem] font-mono text-slate-500 uppercase italic tracking-widest">Hold to Command</div>
-            </div>
-
-            <div class="col-span-12 lg:col-span-8 glass-card rounded-2xl p-8 flex items-center space-x-10">
-                <div class="w-32 h-32 rounded-full border-8 border-purple-500/20 flex items-center justify-center relative">
-                    <div class="absolute inset-0 rounded-full border-t-8 border-cyan-400 animate-spin"></div>
-                    <i class="fa-solid fa-brain text-3xl text-purple-400"></i>
+    <main class="flex-1 p-10 mt-16 overflow-y-auto">
+        <div class="max-w-7xl mx-auto space-y-10">
+            <div class="grid grid-cols-4 gap-6">
+                <div class="glass-card p-6 rounded-2xl border-l-4 border-l-red-500">
+                    <h3 class="font-orbitron text-[0.6rem] text-red-400 tracking-widest mb-1 uppercase">Submittal Alert</h3>
+                    <div class="text-xl font-bold">MERCY_RACKS.pdf</div>
+                    <div class="text-[0.6rem] font-mono text-red-400/70 mt-1 uppercase">Expires: 48H</div>
                 </div>
-                <div>
-                    <div class="text-[0.6rem] text-purple-400 font-bold tracking-widest uppercase mb-1">Cognitive Load</div>
-                    <div class="text-5xl font-black font-orbitron text-white">98.4%</div>
-                    <div class="text-xs text-slate-500 mt-2 italic">Monitoring all divisions via Single Source of Truth.</div>
+            </div>
+
+            <div class="grid grid-cols-12 gap-6">
+                <div class="col-span-12 lg:col-span-4 glass-card rounded-3xl p-10 flex flex-col items-center">
+                    <h3 class="font-orbitron text-[0.6rem] text-cyan-400 tracking-[0.3em] mb-8 uppercase">Speak-to-Adjust</h3>
+                    <button class="w-32 h-32 rounded-full bg-slate-900 border-4 border-cyan-500/20 flex items-center justify-center">
+                        <i class="fa-solid fa-microphone text-4xl text-cyan-400"></i>
+                    </button>
+                    <div class="mt-4 text-[0.6rem] text-slate-500 font-mono italic">Holding Neural Link...</div>
                 </div>
             </div>
         </div>
     </main>
-
-    <div id="qrModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 hidden backdrop-blur-md">
-        <div class="glass-card w-full max-w-lg rounded-3xl p-10 border-purple-500/50">
-            <div class="flex justify-between mb-8">
-                <h2 class="font-orbitron text-xl font-black text-white italic tracking-tighter uppercase">QR Neural Linker</h2>
-                <button onclick="closeQrModal()"><i class="fa-solid fa-xmark text-slate-500 hover:text-white"></i></button>
-            </div>
-            <div class="space-y-6">
-                <div>
-                    <label class="text-[0.6rem] font-bold text-cyan-400 tracking-widest uppercase mb-2 block">1. Target Drawing</label>
-                    <select id="vSelect" class="w-full bg-slate-900 border border-purple-500/20 rounded p-3 text-white outline-none"></select>
-                </div>
-                <div>
-                    <label class="text-[0.6rem] font-bold text-cyan-400 tracking-widest uppercase mb-2 block">2. Monkey ID</label>
-                    <input type="text" id="mId" class="w-full bg-slate-900 border border-purple-500/20 rounded p-3 text-white outline-none font-mono" placeholder="MKY-001">
-                </div>
-                <button onclick="establishLink()" class="w-full py-4 bg-cyan-600 hover:bg-cyan-500 rounded font-orbitron font-bold text-xs tracking-widest text-white shadow-lg">Establish Neural Link</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function openQrModal() {
-            document.getElementById('qrModal').classList.remove('hidden');
-            fetch('/api/vault/files').then(r => r.json()).then(data => {
-                document.getElementById('vSelect').innerHTML = data.map(f => `<option>${f.filename}</option>`).join('');
-            });
-        }
-        function closeQrModal() { document.getElementById('qrModal').classList.add('hidden'); }
-
-        function startMic() {
-            document.getElementById('micBtn').classList.add('bg-cyan-900/20', 'border-cyan-400');
-            document.getElementById('vStatus').innerText = "Listening...";
-        }
-        async function stopMic() {
-            document.getElementById('micBtn').classList.remove('bg-cyan-900/20', 'border-cyan-400');
-            document.getElementById('vStatus').innerText = "Updating Ledger...";
-            const res = await fetch('/inventory/voice-adjust', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({command_text: "Transfer 500ft EMT from MERCY to SHOP"})
-            });
-            if(res.ok) {
-                document.getElementById('vStatus').innerText = "Success ✅";
-                setTimeout(() => document.getElementById('vStatus').innerText = "Hold to Command", 2000);
-            }
-        }
-    </script>
 </body>
 </html>
