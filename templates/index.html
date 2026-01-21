@@ -3,61 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Just-In-Site V7.0</title>
+    <title>Just-In-Site | Command</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+
     <style>
-        body { background-color: #0f172a; color: #e2e8f0; }
-        .card { background-color: #1e293b; border: 1px solid #334155; }
-        .btn-primary { background-color: #3b82f6; }
-        .btn-primary:hover { background-color: #2563eb; }
-        .btn-danger { background-color: #ef4444; }
+        /* SPACE THEME BACKGROUND */
+        body {
+            background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 40%, #020617 100%);
+            color: #e2e8f0;
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+        }
+
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+
+        /* HOLOGRAPHIC GLASS PANELS */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.4); /* Darker, more transparent */
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* ACTIVE STATUS GLOW */
+        .glow-text-green {
+            color: #4ade80;
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+        }
+        .glow-text-red {
+            color: #ef4444;
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
+
+        /* BUTTONS */
+        .btn-action {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-action:hover {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #22d3ee;
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.2);
+        }
+        .btn-action:active {
+            transform: translateY(0);
+        }
+
+        /* LOGOUT BUTTON */
+        .btn-logout {
+            color: #94a3b8;
+            transition: color 0.3s;
+        }
+        .btn-logout:hover {
+            color: #f87171;
+            text-shadow: 0 0 8px rgba(248, 113, 113, 0.6);
+        }
+
+        /* SCANLINE EFFECT (CRT Vibe) */
+        .scanline {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.3;
+        }
     </style>
 </head>
-<body class="font-sans antialiased">
+<body class="antialiased pb-10">
 
-    <nav class="bg-slate-900 border-b border-slate-700 p-4">
-        <div class="container mx-auto flex justify-between items-center">
+    <div class="scanline"></div>
+
+    <nav class="glass-panel border-b border-purple-900/50 sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <i class="fa-solid fa-hard-hat text-yellow-500 text-2xl"></i>
-                <span class="text-xl font-bold tracking-tight">JUST-IN-SITE <span class="text-blue-500">V7.0</span></span>
+                <i class="fa-solid fa-satellite-dish text-cyan-400 text-xl animate-pulse"></i>
+                <div class="flex flex-col">
+                    <span class="font-orbitron text-lg font-bold tracking-widest text-white leading-none">JUST-IN-SITE</span>
+                    <span class="text-[0.6rem] text-purple-400 tracking-[0.3em] font-bold">FIELD COMMAND V7.0</span>
+                </div>
             </div>
-            <div class="text-xs text-slate-400">
-                <i class="fa-solid fa-wifi text-green-500"></i> ONLINE
+            <div>
+                <a href="/auth/logout" class="btn-logout text-xs font-bold tracking-widest border border-slate-700 px-3 py-1 rounded hover:border-red-500">
+                    ABORT <i class="fa-solid fa-power-off ml-1"></i>
+                </a>
             </div>
         </div>
     </nav>
 
-    <div class="container mx-auto p-4 mt-6 max-w-lg">
+    <div class="container mx-auto px-4 mt-8 max-w-lg">
 
-        <div class="card rounded-xl p-6 mb-6 shadow-lg">
-            <h2 class="text-sm uppercase text-slate-400 font-semibold mb-2">Current Status</h2>
-            <div id="status-display" class="text-2xl font-bold text-white">Checking...</div>
-            <div class="mt-4 text-xs text-slate-500">USER: Justin_Live | JOB: MERCY-001</div>
+        <div class="glass-panel rounded-2xl p-6 mb-6 relative overflow-hidden group">
+            <div class="absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-40 transition duration-700">
+                <i class="fa-solid fa-microchip text-8xl text-purple-500 transform rotate-12 translate-x-4 -translate-y-4"></i>
+            </div>
+
+            <h2 class="text-xs font-orbitron text-cyan-500 tracking-widest mb-1">OPERATOR STATUS</h2>
+            <div id="status-display" class="text-3xl font-bold text-white font-orbitron tracking-wide mb-4 flex items-center gap-3">
+                <i class="fa-solid fa-spinner fa-spin text-purple-500 text-xl"></i> PINGING...
+            </div>
+
+            <div class="flex justify-between items-end border-t border-purple-500/30 pt-4">
+                <div>
+                    <div class="text-[0.65rem] text-slate-400 uppercase tracking-widest mb-1">CURRENT ASSIGNMENT</div>
+                    <div class="text-lg font-bold text-purple-200">JOB-MERCY-001</div>
+                </div>
+                <div class="text-right">
+                     <div class="text-[0.65rem] text-slate-400 uppercase tracking-widest mb-1">OPERATOR</div>
+                     <div class="text-lg font-bold text-purple-200">JUSTIN_LIVE</div>
+                </div>
+            </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4 mb-6">
-            <button onclick="clockIn()" class="card hover:border-blue-500 transition p-6 rounded-xl flex flex-col items-center justify-center space-y-3 group">
-                <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-blue-900 transition">
-                    <i class="fa-solid fa-clock text-blue-400 text-xl"></i>
+            <button onclick="clockIn()" class="btn-action p-6 rounded-2xl flex flex-col items-center justify-center space-y-3 group relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                <div class="w-14 h-14 rounded-full bg-slate-900/80 border border-cyan-500/30 flex items-center justify-center group-hover:border-cyan-400 group-hover:shadow-[0_0_15px_rgba(34,211,238,0.4)] transition duration-300">
+                    <i class="fa-solid fa-fingerprint text-cyan-400 text-2xl"></i>
                 </div>
-                <span class="font-semibold">Clock In</span>
+                <span class="font-orbitron text-sm font-bold tracking-wider z-10">CLOCK IN</span>
             </button>
 
-            <button onclick="orderMaterial()" class="card hover:border-green-500 transition p-6 rounded-xl flex flex-col items-center justify-center space-y-3 group">
-                <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-green-900 transition">
-                    <i class="fa-solid fa-box text-green-400 text-xl"></i>
+            <button onclick="orderMaterial()" class="btn-action p-6 rounded-2xl flex flex-col items-center justify-center space-y-3 group relative overflow-hidden">
+                 <div class="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                <div class="w-14 h-14 rounded-full bg-slate-900/80 border border-purple-500/30 flex items-center justify-center group-hover:border-purple-400 group-hover:shadow-[0_0_15px_rgba(168,85,247,0.4)] transition duration-300">
+                    <i class="fa-solid fa-box-open text-purple-400 text-2xl"></i>
                 </div>
-                <span class="font-semibold">Order Parts</span>
+                <span class="font-orbitron text-sm font-bold tracking-wider z-10">REQUISITION</span>
             </button>
         </div>
 
-        <div class="card rounded-xl p-6">
-            <h3 class="text-sm font-semibold mb-4 border-b border-slate-700 pb-2">System Logs</h3>
-            <div id="logs" class="space-y-3 text-sm text-slate-300">
-                <div class="flex items-center space-x-2">
-                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                    <span>System initialized...</span>
+        <div class="glass-panel rounded-2xl p-6">
+            <div class="flex justify-between items-center mb-4 border-b border-purple-500/30 pb-2">
+                <h3 class="text-xs font-orbitron text-purple-400 tracking-widest">SYSTEM LOGS</h3>
+                <span class="text-[0.6rem] bg-purple-900/50 text-purple-300 px-2 py-1 rounded border border-purple-500/20">LIVE FEED</span>
+            </div>
+
+            <div id="logs" class="space-y-3 text-sm font-mono max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                <div class="flex items-start space-x-3 text-slate-500">
+                    <span class="text-xs mt-1">></span>
+                    <span>Uplink established. Waiting for command.</span>
                 </div>
             </div>
         </div>
@@ -65,11 +157,10 @@
     </div>
 
     <script>
-        const API_URL = window.location.origin; // Auto-detects Railway URL
+        const API_URL = window.location.origin;
         const USER_ID = "Justin_Live";
         const JOB_ID = "JOB-MERCY-001";
 
-        // 1. Check Status on Load
         async function checkStatus() {
             try {
                 const res = await fetch(`${API_URL}/rabbit/status/${USER_ID}`);
@@ -77,18 +168,17 @@
                 const display = document.getElementById('status-display');
 
                 if (data.status_message.includes("CLOCKED IN")) {
-                    display.innerHTML = '<span class="text-green-400">🟢 Clocked In</span>';
+                    display.innerHTML = '<i class="fa-solid fa-circle text-xs text-green-500 animate-pulse"></i> <span class="glow-text-green">ACTIVE</span>';
                 } else {
-                    display.innerHTML = '<span class="text-slate-400">🔴 Clocked Out</span>';
+                    display.innerHTML = '<i class="fa-regular fa-circle text-xs text-slate-600"></i> <span class="text-slate-400">STANDBY</span>';
                 }
             } catch (err) {
                 console.error(err);
             }
         }
 
-        // 2. Clock In Function
         async function clockIn() {
-            log("Attempting Clock In...");
+            log("INITIATING GEO-SYNC...", "info");
             try {
                 const res = await fetch(`${API_URL}/rabbit/clock-in`, {
                     method: 'POST',
@@ -96,40 +186,44 @@
                     body: JSON.stringify({
                         user_id: USER_ID,
                         job_id: JOB_ID,
-                        lat: 41.0995, // Hardcoded Mercy Hospital for demo
+                        lat: 41.0995,
                         lon: -80.6400
                     })
                 });
 
                 if (res.ok) {
                     const data = await res.json();
-                    log(`✅ Success: ${data.start_time}`);
+                    log(`SYNC COMPLETE: ${data.start_time}`, "success");
                     checkStatus();
                 } else {
                     const err = await res.json();
-                    log(`❌ Error: ${err.detail}`);
+                    log(`ERROR: ${err.detail}`, "error");
                 }
             } catch (error) {
-                log("❌ Network Error");
+                log("CONNECTION LOST", "error");
             }
         }
 
-        // 3. Mock Material Order
         function orderMaterial() {
-            alert("Open Camera Scanner? (Feature coming in V7.1)");
+            log("MODULE UNAVAILABLE: UPGRADE REQUIRED", "warning");
         }
 
-        function log(msg) {
+        function log(msg, type) {
             const logs = document.getElementById('logs');
             const entry = document.createElement('div');
-            entry.className = "flex items-center space-x-2 opacity-0 animate-fadeIn";
-            entry.innerHTML = `<span class="text-xs text-slate-500">${new Date().toLocaleTimeString()}</span><span>${msg}</span>`;
+
+            let colorClass = "text-slate-400";
+            if (type === "success") colorClass = "text-cyan-400";
+            if (type === "error") colorClass = "text-red-400";
+            if (type === "warning") colorClass = "text-yellow-400";
+
+            entry.className = `flex items-start space-x-3 ${colorClass} opacity-0 transition-opacity duration-500`;
+            entry.innerHTML = `<span class="text-xs mt-1 text-purple-600">></span><span>${msg}</span>`;
+
             logs.prepend(entry);
-            // Simple fade in animation via class
             setTimeout(() => entry.classList.remove('opacity-0'), 50);
         }
 
-        // Run on load
         checkStatus();
     </script>
 </body>
