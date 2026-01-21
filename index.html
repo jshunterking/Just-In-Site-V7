@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Just-In-Site | Command</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 40%, #020617 100%); color: #e2e8f0; font-family: 'Rajdhani', sans-serif; min-height: 100vh; padding-bottom: 80px; }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .glass-panel { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(139, 92, 246, 0.2); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); }
+        .btn-action { transition: all 0.2s; }
+        .btn-action:active { transform: scale(0.95); }
+        select { background-color: rgba(15, 23, 42, 0.8); border: 1px solid rgba(139, 92, 246, 0.4); color: white; }
+
+        /* Modal Animation */
+        .modal { opacity: 0; pointer-events: none; transition: all 0.3s; }
+        .modal.active { opacity: 1; pointer-events: auto; }
+        .modal-content { transform: translateY(20px); transition: all 0.3s; }
+        .modal.active .modal-content { transform: translateY(0); }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="glass-panel border-b border-purple-900/50 sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-satellite-dish text-cyan-400 animate-pulse"></i>
+                <span class="font-orbitron font-bold tracking-widest text-white">JUST-IN-SITE</span>
+            </div>
+            <select id="jobSelector" class="text-xs rounded px-2 py-1 font-orbitron tracking-wide focus:outline-none focus:border-cyan-400">
+                <option value="LOADING">Loading Jobs...</option>
+            </select>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 mt-6 max-w-lg space-y-4">
+
+        <div class="glass-panel rounded-2xl p-6 relative overflow-hidden">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h2 class="text-xs font-orbitron text-purple-400 tracking-widest mb-1">OPERATOR STATUS</h2>
+                    <div id="status-text" class="text-2xl font-bold text-white font-orbitron tracking-wide">
+                        initializing...
+                    </div>
+                    <div id="status-timer" class="text-sm text-cyan-400 mt-1 hidden font-mono">
+                        <i class="fa-solid fa-stopwatch mr-1"></i> <span id="timer-val">00:00:00</span>
+                    </div>
+                </div>
+                <div id="status-icon" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-power-off text-slate-500 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <button id="clockBtn" onclick="toggleClock()" class="btn-action glass-panel p-6 rounded-2xl flex flex-col items-center justify-center space-y-2 border-l-4 border-l-cyan-500 hover:bg-white/5">
+                <i class="fa-solid fa-fingerprint text-3xl text-cyan-400 mb-2"></i>
+                <span id="clockBtnText" class="font-orbitron text-sm font-bold tracking-wider">CLOCK IN</span>
+            </button>
+
+            <button onclick="openModal('materialModal')" class="btn-action glass-panel p-6 rounded-2xl flex flex-col items-center justify-center space-y-2 border-l-4 border-l-purple-500 hover:bg-white/5">
+                <i class="fa-solid fa-box-open text-3xl text-purple-400 mb-2"></i>
+                <span class="font-orbitron text-sm font-bold tracking-wider">ORDER PARTS</span>
+            </button>
+        </div>
+
+        <div class="glass-panel rounded-2xl p-4">
+             <h3 class="text-xs font-orbitron text-cyan-500 tracking-widest mb-3 border-b border-cyan-900/50 pb-2">
+                 <i class="fa-solid fa-list-check mr-1"></i> ACTIVE TICKETS
+             </h3>
+             <div id="ticket-feed" class="space-y-3 max-h-60 overflow-y-auto">
+                 <div class="text-center text-xs text-slate-500 py-4">Scanning Neural Net...</div>
+             </div>
+        </div>
+
+        <div id="logs" class="text-[0.65rem] font-mono text-slate-500 h-20 overflow-hidden opacity-70"></div>
+
+        <div class="text-center">
+             <a href="/auth/logout" class="text-xs text-red-400/50 hover:text-red-400 tracking-widest font-bold">TERMINATE SESSION</a>
+        </div>
+
+    </div>
+
+    <div id="materialModal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+        <div class="modal-content glass-panel w-full max-w-sm rounded-2xl p-6 relative border border-purple-500/50 shadow-[0_0_30px_rgba(168,85,247,0.3)]">
+            <button onclick="closeModal('materialModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+
+            <h2 class="font-orbitron text-xl font-bold text-white mb-6 flex items-center">
+                <i class="fa-solid fa-cube text-purple-400 mr-2"></i> REQUISITION
+            </h2>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs font-bold text-purple-300 uppercase tracking-wider">Item / SKU</label>
+                    <input type="text" id="matSku" class="w-full bg-slate-900/80 border border-purple-500/30 rounded p-3 text-white focus:border-cyan-400 outline-none font-mono" placeholder="ex: 12/2 ROMEX">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-purple-300 uppercase tracking-wider">Quantity</label>
+                    <input type="number" id="matQty" class="w-full bg-slate-900/80 border border-purple-500/30 rounded p-3 text-white focus:border-cyan-400 outline-none font-mono" placeholder="0">
+                </div>
+                <button onclick="submitMaterial()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded shadow-lg transition font-orbitron tracking-widest mt-2">
+                    TRANSMIT ORDER
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = window.location.origin;
+        const USER = "Justin_Live";
+        let isClockedIn = false;
+
+        // INIT
+        (async function init() {
+            await loadJobs();
+            await checkStatus();
+            await loadTickets();
+        })();
+
+        async function loadJobs() {
+            try {
+                const res = await fetch(`${API}/api/jobs`);
+                const jobs = await res.json();
+                const sel = document.getElementById('jobSelector');
+                sel.innerHTML = jobs.map(j => `<option value="${j.id}">${j.name}</option>`).join('');
+            } catch(e) { log("Failed to load jobs"); }
+        }
+
+        async function checkStatus() {
+            try {
+                const res = await fetch(`${API}/rabbit/status/${USER}`);
+                const data = await res.json();
+                isClockedIn = data.clocked_in;
+                updateUI(data.status_message);
+            } catch(e) {}
+        }
+
+        function updateUI(statusMsg) {
+            const statusText = document.getElementById('status-text');
+            const statusIcon = document.getElementById('status-icon');
+            const clockBtn = document.getElementById('clockBtn');
+            const clockBtnText = document.getElementById('clockBtnText');
+
+            if (isClockedIn) {
+                // CLOCKED IN STATE
+                statusText.innerHTML = '<span class="text-green-400 text-shadow-green">ACTIVE UPLINK</span>';
+                statusIcon.innerHTML = '<i class="fa-solid fa-satellite-dish text-green-400 fa-beat-fade"></i>';
+                statusIcon.className = "w-12 h-12 rounded-full bg-green-900/30 border border-green-500/50 flex items-center justify-center";
+
+                clockBtn.className = "btn-action glass-panel p-6 rounded-2xl flex flex-col items-center justify-center space-y-2 border-l-4 border-l-red-500 bg-red-900/10 hover:bg-red-900/20";
+                clockBtn.innerHTML = '<i class="fa-solid fa-power-off text-3xl text-red-400 mb-2"></i><span class="font-orbitron text-sm font-bold tracking-wider text-red-200">CLOCK OUT</span>';
+
+            } else {
+                // CLOCKED OUT STATE
+                statusText.innerHTML = '<span class="text-slate-400">STANDBY MODE</span>';
+                statusIcon.innerHTML = '<i class="fa-solid fa-pause text-slate-500"></i>';
+                statusIcon.className = "w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center";
+
+                clockBtn.className = "btn-action glass-panel p-6 rounded-2xl flex flex-col items-center justify-center space-y-2 border-l-4 border-l-cyan-500 hover:bg-cyan-900/10";
+                clockBtn.innerHTML = '<i class="fa-solid fa-fingerprint text-3xl text-cyan-400 mb-2"></i><span class="font-orbitron text-sm font-bold tracking-wider text-cyan-200">CLOCK IN</span>';
+            }
+            log(statusMsg);
+        }
+
+        async function toggleClock() {
+            const jobId = document.getElementById('jobSelector').value;
+            const endpoint = isClockedIn ? '/rabbit/clock-out' : '/rabbit/clock-in';
+            const body = isClockedIn
+                ? { user_id: USER }
+                : { user_id: USER, job_id: jobId, lat: 41.0995, lon: -80.6400 };
+
+            try {
+                const res = await fetch(`${API}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                if (res.ok) {
+                    await checkStatus();
+                } else {
+                    const err = await res.json();
+                    alert(err.detail);
+                }
+            } catch(e) { alert("Connection Error"); }
+        }
+
+        async function loadTickets() {
+            try {
+                const res = await fetch(`${API}/panther/tickets`);
+                const tickets = await res.json();
+                const feed = document.getElementById('ticket-feed');
+
+                if (tickets.length === 0) {
+                    feed.innerHTML = '<div class="text-xs text-slate-500 text-center">No active signals.</div>';
+                    return;
+                }
+
+                feed.innerHTML = tickets.map(t => `
+                    <div class="bg-slate-800/50 border border-slate-700 rounded p-3 flex justify-between items-center">
+                        <div>
+                            <div class="text-[0.65rem] font-bold text-purple-400 tracking-wider">${t.id} // ${t.priority}</div>
+                            <div class="text-sm font-bold text-white">${t.customer}</div>
+                            <div class="text-xs text-slate-400 truncate w-40">${t.issue}</div>
+                        </div>
+                        <button class="bg-cyan-900/50 text-cyan-400 border border-cyan-500/30 px-2 py-1 rounded text-xs hover:bg-cyan-500 hover:text-white transition">
+                            VIEW
+                        </button>
+                    </div>
+                `).join('');
+            } catch(e) {}
+        }
+
+        async function submitMaterial() {
+            const sku = document.getElementById('matSku').value;
+            const qty = document.getElementById('matQty').value;
+            const jobId = document.getElementById('jobSelector').value;
+
+            if (!sku || !qty) return;
+
+            try {
+                const res = await fetch(`${API}/rabbit/requisition`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ user_id: USER, job_id: jobId, sku: sku, qty: parseInt(qty) })
+                });
+                if (res.ok) {
+                    closeModal('materialModal');
+                    log(`ORDER TRANSMITTED: ${sku} (x${qty})`);
+                    document.getElementById('matSku').value = '';
+                    document.getElementById('matQty').value = '';
+                }
+            } catch(e) {}
+        }
+
+        // UTILS
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function log(msg) {
+            const logs = document.getElementById('logs');
+            logs.innerHTML = `> ${msg} <br> ${logs.innerHTML}`;
+        }
+    </script>
+</body>
+</html>

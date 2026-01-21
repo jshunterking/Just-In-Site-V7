@@ -1,17 +1,15 @@
 """
-JUST-IN-SITE V7.0 | WEB SERVER API + UI
-The Full Stack Application with Login Security.
+JUST-IN-SITE V7.1 | WEB SERVER API + UI
+Full Stack with Job Selection, Clock-Out, and Ticketing.
 
 AUTHOR: Justin (King Kong) & Gemini (The Architect)
-DATE: 2026-01-20
 """
 
-from fastapi import FastAPI, HTTPException, Request, Response, Depends
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from typing import Optional
+from typing import List, Optional
 
 # --- IMPORT LIMBS (Safe Mode) ---
 try:
@@ -20,13 +18,10 @@ try:
     from rabbit_paws import RabbitPaws
     from raptor_voice import RaptorVoice
 except ImportError:
-    RabbitTime = None
-    PantherBrain = None
-    RabbitPaws = None
-    RaptorVoice = None
+    RabbitTime = None; PantherBrain = None; RabbitPaws = None; RaptorVoice = None
 
 # --- APP SETUP ---
-app = FastAPI(title="Just-In-Site V7.0")
+app = FastAPI(title="Just-In-Site V7.1")
 templates = Jinja2Templates(directory="templates")
 
 # Initialize Systems
@@ -35,12 +30,10 @@ brain = PantherBrain() if PantherBrain else None
 paws = RabbitPaws() if RabbitPaws else None
 voice = RaptorVoice() if RaptorVoice else None
 
-
 # --- MODELS ---
 class LoginRequest(BaseModel):
     username: str
     password: str
-
 
 class ClockInRequest(BaseModel):
     user_id: str
@@ -48,68 +41,84 @@ class ClockInRequest(BaseModel):
     lat: float
     lon: float
 
+class ClockOutRequest(BaseModel):
+    user_id: str
 
-# --- SECURITY MIDDLEWARE ---
+class MaterialRequest(BaseModel):
+    user_id: str
+    job_id: str
+    sku: str
+    qty: int
+
+# --- SECURITY ---
 def verify_cookie(request: Request):
     token = request.cookies.get("access_token")
-    if not token or token != "v7-secure-uplink":
-        return False
-    return True
-
+    return token == "v7-secure-uplink"
 
 # --- UI ROUTES ---
-
 @app.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):
-    """Serve the 22nd Century Login Screen."""
     return templates.TemplateResponse("login.html", {"request": request})
-
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    """Serve Dashboard (Protected)."""
-    # Check if user has the 'key' (cookie)
-    if not verify_cookie(request):
-        return RedirectResponse(url="/login")
-
+    if not verify_cookie(request): return RedirectResponse(url="/login")
     return templates.TemplateResponse("index.html", {"request": request})
 
-
 # --- AUTH API ---
-
 @app.post("/auth/login")
 def login(data: LoginRequest, response: Response):
-    """
-    Validates credentials.
-    HARDCODED FOR PROTOTYPE: User 'Justin' / Pass 'admin'
-    """
     if data.username.lower() == "justin" and data.password == "admin":
-        # Set a cookie that lasts for 24 hours
         response.set_cookie(key="access_token", value="v7-secure-uplink", max_age=86400)
         return {"message": "Access Granted"}
-    else:
-        raise HTTPException(status_code=401, detail="Invalid Credentials")
-
+    raise HTTPException(status_code=401, detail="Invalid Credentials")
 
 @app.get("/auth/logout")
 def logout(response: Response):
     response.delete_cookie("access_token")
     return RedirectResponse(url="/login")
 
+# --- DATA API ---
 
-# --- API ROUTES (The Engine) ---
+@app.get("/api/jobs")
+def get_jobs():
+    """Returns list of active jobs for the dropdown."""
+    return [
+        {"id": "JOB-MERCY-001", "name": "Mercy Hospital - ER Reno"},
+        {"id": "JOB-STEEL-004", "name": "Cleveland Cliffs - Blast Furnace"},
+        {"id": "JOB-RES-299",   "name": "Smith Residence - Service"},
+        {"id": "JOB-SHOP-000",  "name": "Pre-Fab Shop"}
+    ]
 
+# 🐇 RABBIT OPERATIONS
 @app.post("/rabbit/clock-in")
 def api_clock_in(data: ClockInRequest):
-    if not clock: raise HTTPException(status_code=503, detail="System Offline")
-    result = clock.clock_in(data.user_id, data.job_id, data.lat, data.lon)
-    if result['success']:
-        return result
-    else:
-        raise HTTPException(status_code=400, detail=result['reason'])
+    if not clock: raise HTTPException(status_code=503, detail="Offline")
+    res = clock.clock_in(data.user_id, data.job_id, data.lat, data.lon)
+    if res['success']: return res
+    raise HTTPException(status_code=400, detail=res['reason'])
 
+@app.post("/rabbit/clock-out")
+def api_clock_out(data: ClockOutRequest):
+    if not clock: raise HTTPException(status_code=503, detail="Offline")
+    res = clock.clock_out(data.user_id)
+    if res['success']: return res
+    raise HTTPException(status_code=400, detail=res['reason'])
 
 @app.get("/rabbit/status/{user_id}")
 def api_get_status(user_id: str):
-    if not clock: return {"status_message": "System Offline"}
-    return {"status_message": clock.get_status(user_id)}
+    if not clock: return {"status_message": "System Offline", "clocked_in": False}
+    msg = clock.get_status(user_id)
+    return {"status_message": msg, "clocked_in": "CLOCKED IN" in msg}
+
+@app.post("/rabbit/requisition")
+def api_create_req(data: MaterialRequest):
+    if not paws: raise HTTPException(status_code=503, detail="Offline")
+    items = [{"sku": data.sku, "qty": data.qty, "est_cost": 0.00}]
+    return paws.create_requisition(data.job_id, data.user_id, items)
+
+# 🐆 PANTHER OPERATIONS
+@app.get("/panther/tickets")
+def get_tickets():
+    if not brain: return []
+    return brain.tickets
