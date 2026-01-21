@@ -2,247 +2,180 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Just-In-Site | Command</title>
+    <title>Monkey OS V9.0.3 | FULL OMNI-COMMAND</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 40%, #020617 100%); color: #e2e8f0; font-family: 'Rajdhani', sans-serif; min-height: 100vh; padding-bottom: 80px; }
+        body {
+            background: #020617;
+            background-image: radial-gradient(circle at 50% 50%, rgba(76, 29, 149, 0.1) 0%, transparent 80%);
+            color: #e2e8f0; font-family: 'Rajdhani', sans-serif; overflow: hidden;
+        }
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
-        .glass-panel { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(139, 92, 246, 0.2); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); }
-        .btn-action { transition: all 0.2s; }
-        .btn-action:active { transform: scale(0.95); }
-        select { background-color: rgba(15, 23, 42, 0.8); border: 1px solid rgba(139, 92, 246, 0.4); color: white; }
-
-        /* Modal Animation */
-        .modal { opacity: 0; pointer-events: none; transition: all 0.3s; }
-        .modal.active { opacity: 1; pointer-events: auto; }
-        .modal-content { transform: translateY(20px); transition: all 0.3s; }
-        .modal.active .modal-content { transform: translateY(0); }
+        .glass-card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(139, 92, 246, 0.2); backdrop-filter: blur(10px); }
+        .sidebar { background: rgba(10, 10, 25, 0.95); border-right: 2px solid #4c1d95; }
+        .nav-item { transition: 0.2s; border-left: 4px solid transparent; }
+        .nav-item:hover { background: rgba(139, 92, 246, 0.1); border-left-color: #22d3ee; }
+        .neon-glow { text-shadow: 0 0 10px rgba(34, 211, 238, 0.6); }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #4c1d95; border-radius: 10px; }
     </style>
 </head>
-<body class="antialiased">
+<body class="flex h-screen relative">
 
-    <nav class="glass-panel border-b border-purple-900/50 sticky top-0 z-40">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <i class="fa-solid fa-satellite-dish text-cyan-400 animate-pulse"></i>
-                <span class="font-orbitron font-bold tracking-widest text-white">JUST-IN-SITE</span>
-            </div>
-            <select id="jobSelector" class="text-xs rounded px-2 py-1 font-orbitron tracking-wide focus:outline-none focus:border-cyan-400">
-                <option value="LOADING">Loading Jobs...</option>
-            </select>
+    <div class="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-xl px-4">
+        <div class="glass-card flex items-center px-6 py-3 rounded-full border-cyan-500/30 shadow-2xl">
+            <i class="fa-solid fa-brain text-cyan-400 mr-4 animate-pulse"></i>
+            <input type="text" id="mSearch" placeholder="Ask the Monkey (e.g. 'Mercy Hospital Pipe')" class="bg-transparent w-full text-white outline-none font-mono text-xs">
         </div>
-    </nav>
-
-    <div class="container mx-auto px-4 mt-6 max-w-lg space-y-4">
-
-        <div class="glass-panel rounded-2xl p-6 relative overflow-hidden">
-            <div class="flex justify-between items-start">
-                <div>
-                    <h2 class="text-xs font-orbitron text-purple-400 tracking-widest mb-1">OPERATOR STATUS</h2>
-                    <div id="status-text" class="text-2xl font-bold text-white font-orbitron tracking-wide">
-                        initializing...
-                    </div>
-                    <div id="status-timer" class="text-sm text-cyan-400 mt-1 hidden font-mono">
-                        <i class="fa-solid fa-stopwatch mr-1"></i> <span id="timer-val">00:00:00</span>
-                    </div>
-                </div>
-                <div id="status-icon" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center">
-                    <i class="fa-solid fa-power-off text-slate-500 text-xl"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-            <button id="clockBtn" onclick="toggleClock()" class="btn-action glass-panel p-6 rounded-2xl flex flex-col items-center justify-center space-y-2 border-l-4 border-l-cyan-500 hover:bg-white/5">
-                <i class="fa-solid fa-fingerprint text-3xl text-cyan-400 mb-2"></i>
-                <span id="clockBtnText" class="font-orbitron text-sm font-bold tracking-wider">CLOCK IN</span>
-            </button>
-
-            <button onclick="openModal('materialModal')" class="btn-action glass-panel p-6 rounded-2xl flex flex-col items-center justify-center space-y-2 border-l-4 border-l-purple-500 hover:bg-white/5">
-                <i class="fa-solid fa-box-open text-3xl text-purple-400 mb-2"></i>
-                <span class="font-orbitron text-sm font-bold tracking-wider">ORDER PARTS</span>
-            </button>
-        </div>
-
-        <div class="glass-panel rounded-2xl p-4">
-             <h3 class="text-xs font-orbitron text-cyan-500 tracking-widest mb-3 border-b border-cyan-900/50 pb-2">
-                 <i class="fa-solid fa-list-check mr-1"></i> ACTIVE TICKETS
-             </h3>
-             <div id="ticket-feed" class="space-y-3 max-h-60 overflow-y-auto">
-                 <div class="text-center text-xs text-slate-500 py-4">Scanning Neural Net...</div>
-             </div>
-        </div>
-
-        <div id="logs" class="text-[0.65rem] font-mono text-slate-500 h-20 overflow-hidden opacity-70"></div>
-
-        <div class="text-center">
-             <a href="/auth/logout" class="text-xs text-red-400/50 hover:text-red-400 tracking-widest font-bold">TERMINATE SESSION</a>
-        </div>
-
     </div>
 
-    <div id="materialModal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
-        <div class="modal-content glass-panel w-full max-w-sm rounded-2xl p-6 relative border border-purple-500/50 shadow-[0_0_30px_rgba(168,85,247,0.3)]">
-            <button onclick="closeModal('materialModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+    <aside class="sidebar w-72 flex-shrink-0 flex flex-col">
+        <div class="p-8 border-b border-purple-900/30">
+            <h1 class="font-orbitron text-xl font-black text-white italic neon-glow">MONKEY CORE</h1>
+            <p class="text-[0.6rem] text-cyan-400 font-bold tracking-[0.3em] uppercase">V9.0.3 // {{ name }}</p>
+        </div>
 
-            <h2 class="font-orbitron text-xl font-bold text-white mb-6 flex items-center">
-                <i class="fa-solid fa-cube text-purple-400 mr-2"></i> REQUISITION
-            </h2>
+        <nav class="flex-1 mt-6 overflow-y-auto">
+            <a href="#" class="nav-item flex items-center px-8 py-3 space-x-3 text-cyan-400 bg-cyan-900/10 border-l-cyan-400 mb-4">
+                <i class="fa-solid fa-satellite-dish"></i> <span class="font-bold tracking-widest uppercase text-xs">Command Deck</span>
+            </a>
 
-            <div class="space-y-4">
+            {% if 'PREFAB_MANAGER' in hats %}
+            <div class="px-8 py-2 text-[0.6rem] text-purple-400 font-bold uppercase tracking-widest mb-1">Prefab Manager</div>
+            <a href="#" onclick="openQrModal()" class="nav-item flex items-center px-8 py-3 space-x-3 text-slate-400 hover:text-white mb-1">
+                <i class="fa-solid fa-qrcode"></i> <span>QR Neural Linker</span>
+            </a>
+            <a href="#" class="nav-item flex items-center px-8 py-3 space-x-3 text-slate-400 hover:text-white mb-4">
+                <i class="fa-solid fa-layer-group"></i> <span>Batch Kanban</span>
+            </a>
+            {% endif %}
+
+            {% if 'PURCHASING' in hats %}
+            <div class="px-8 py-2 text-[0.6rem] text-green-400 font-bold uppercase tracking-widest mb-1">Purchasing</div>
+            <a href="#" class="nav-item flex items-center px-8 py-3 space-x-3 text-slate-400 hover:text-white mb-4">
+                <i class="fa-solid fa-cart-shopping"></i> <span>The Buy-Board</span>
+            </a>
+            {% endif %}
+
+            {% if 'FIELD_FOREMAN' in hats or 'PREFAB_FOREMAN' in hats %}
+            <div class="px-8 py-2 text-[0.6rem] text-orange-400 font-bold uppercase tracking-widest mb-1">Foreman Control</div>
+            <a href="#" class="nav-item flex items-center px-8 py-3 space-x-3 text-slate-400 hover:text-white mb-4">
+                <i class="fa-solid fa-clipboard-check"></i> <span>Time Approvals</span>
+            </a>
+            {% endif %}
+
+            {% if 'ADMIN' in hats %}
+            <div class="px-8 py-2 text-[0.6rem] text-red-500 font-bold uppercase tracking-widest mb-1">System Override</div>
+            <a href="#" class="nav-item flex items-center px-8 py-3 space-x-3 text-slate-400 hover:text-white mb-4">
+                <i class="fa-solid fa-users-gear"></i> <span>Manage Neural Hats</span>
+            </a>
+            {% endif %}
+        </nav>
+
+        <div class="p-6 border-t border-purple-900/30">
+            <a href="/auth/logout" class="block w-full text-center py-2 rounded border border-red-500/50 text-red-500 font-bold text-[0.6rem] uppercase tracking-widest font-orbitron hover:bg-red-500/10">Sever Link</a>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-10 mt-16 overflow-y-auto">
+        <div class="max-w-7xl mx-auto space-y-10">
+
+            <div class="grid grid-cols-12 gap-6">
+                <div class="col-span-12 lg:col-span-8 glass-card rounded-3xl p-8 border-l-4 border-l-red-500">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-orbitron text-[0.65rem] text-red-400 tracking-[0.2em] uppercase font-bold">Critical Submittal Pulse</h3>
+                        <span class="text-[0.6rem] text-slate-500 font-mono">Job Tracking: Active</span>
+                    </div>
+                    <div class="flex items-center justify-between bg-white/5 p-4 rounded-xl border border-white/5">
+                        <div>
+                            <div class="text-xl font-bold">MAIN_POWER_RACK.pdf</div>
+                            <div class="text-[0.6rem] text-red-400 uppercase font-bold mt-1">Status: Pending Engineer Review</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-black text-red-500 font-orbitron">48H</div>
+                            <div class="text-[0.5rem] text-slate-500 uppercase">Until Expiry</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-span-12 lg:col-span-4 glass-card rounded-3xl p-8 flex flex-col items-center justify-center">
+                    <div class="text-[0.6rem] text-purple-400 font-bold tracking-widest uppercase mb-4">Cognitive Load</div>
+                    <div class="relative w-32 h-32 flex items-center justify-center">
+                        <svg class="w-full h-full transform -rotate-90">
+                            <circle cx="64" cy="64" r="58" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-800" />
+                            <circle cx="64" cy="64" r="58" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="364" stroke-dashoffset="40" class="text-cyan-500 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+                        </svg>
+                        <span class="absolute text-2xl font-black font-orbitron">94%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-12 gap-6">
+                <div class="col-span-12 lg:col-span-4 glass-card rounded-3xl p-10 flex flex-col items-center group">
+                    <h3 class="font-orbitron text-[0.65rem] text-cyan-400 tracking-[0.3em] mb-10 uppercase italic">Speak-to-Adjust</h3>
+                    <button id="micBtn" onmousedown="startMic()" onmouseup="stopMic()" class="w-32 h-32 rounded-full bg-slate-950 border-4 border-cyan-500/20 flex items-center justify-center shadow-[0_0_30px_rgba(34,211,238,0.1)] group-hover:border-cyan-400/50 transition duration-500">
+                        <i id="micIcon" class="fa-solid fa-microphone text-4xl text-cyan-400"></i>
+                    </button>
+                    <div id="vStatus" class="mt-6 text-[0.6rem] font-mono text-slate-500 uppercase tracking-widest italic">Hold Neural Link</div>
+                </div>
+
+                <div class="col-span-12 lg:col-span-8 glass-card rounded-3xl overflow-hidden flex flex-col h-[300px]">
+                    <div class="px-6 py-4 border-b border-purple-900/30 bg-slate-900/50">
+                        <span class="font-orbitron text-[0.65rem] text-purple-400 tracking-widest uppercase">Live Datastream</span>
+                    </div>
+                    <div class="flex-1 p-6 space-y-4 font-mono text-[0.7rem] overflow-y-auto" id="feed">
+                        <div class="text-cyan-400">[SYSTEM] Neural link established. Welcome Alpha.</div>
+                        <div class="text-slate-500">[PAWS] Bulk order 5000ft EMT synchronized to Buy-Board.</div>
+                        <div class="text-red-400">[PANTHER] 1 critical submittal nearing deadline.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="qrModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 hidden backdrop-blur-md">
+        <div class="glass-card w-full max-w-xl rounded-3xl p-10 border-purple-500/50">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="font-orbitron text-xl font-black text-white italic tracking-tighter uppercase">QR Neural Linker</h2>
+                <button onclick="closeQrModal()"><i class="fa-solid fa-xmark text-slate-500 hover:text-white transition"></i></button>
+            </div>
+            <div class="space-y-6">
                 <div>
-                    <label class="text-xs font-bold text-purple-300 uppercase tracking-wider">Item / SKU</label>
-                    <input type="text" id="matSku" class="w-full bg-slate-900/80 border border-purple-500/30 rounded p-3 text-white focus:border-cyan-400 outline-none font-mono" placeholder="ex: 12/2 ROMEX">
+                    <label class="text-[0.6rem] font-bold text-cyan-400 tracking-widest uppercase mb-2 block">1. Select Drawing</label>
+                    <select id="vSelect" class="w-full bg-slate-950 border border-purple-500/30 rounded-lg p-3 text-white outline-none focus:border-cyan-400">
+                        <option>MAIN_POWER_RACK.pdf</option>
+                        <option>STEEL_MILL_SPIDER.pdf</option>
+                    </select>
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-purple-300 uppercase tracking-wider">Quantity</label>
-                    <input type="number" id="matQty" class="w-full bg-slate-900/80 border border-purple-500/30 rounded p-3 text-white focus:border-cyan-400 outline-none font-mono" placeholder="0">
+                    <label class="text-[0.6rem] font-bold text-cyan-400 tracking-widest uppercase mb-2 block">2. Assign Monkey ID</label>
+                    <input type="text" id="mId" class="w-full bg-slate-950 border border-purple-500/30 rounded-lg p-3 text-white outline-none font-mono" placeholder="MKY-BRKT-001">
                 </div>
-                <button onclick="submitMaterial()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded shadow-lg transition font-orbitron tracking-widest mt-2">
-                    TRANSMIT ORDER
-                </button>
+                <button onclick="establishLink()" class="w-full py-4 bg-cyan-600 hover:bg-cyan-500 rounded-xl font-orbitron font-bold text-xs tracking-widest text-white shadow-lg transition">ESTABLISH NEURAL LINK</button>
             </div>
         </div>
     </div>
 
     <script>
-        const API = window.location.origin;
-        const USER = "Justin_Live";
-        let isClockedIn = false;
+        // MODAL LOGIC
+        function openQrModal() { document.getElementById('qrModal').classList.remove('hidden'); }
+        function closeQrModal() { document.getElementById('qrModal').classList.add('hidden'); }
 
-        // INIT
-        (async function init() {
-            await loadJobs();
-            await checkStatus();
-            await loadTickets();
-        })();
-
-        async function loadJobs() {
-            try {
-                const res = await fetch(`${API}/api/jobs`);
-                const jobs = await res.json();
-                const sel = document.getElementById('jobSelector');
-                sel.innerHTML = jobs.map(j => `<option value="${j.id}">${j.name}</option>`).join('');
-            } catch(e) { log("Failed to load jobs"); }
+        // MIC LOGIC
+        function startMic() {
+            document.getElementById('micBtn').classList.add('bg-cyan-900/20', 'border-cyan-400');
+            document.getElementById('micIcon').className = "fa-solid fa-wave-square text-4xl text-cyan-400 animate-pulse";
+            document.getElementById('vStatus').innerText = "Streaming Brainwaves...";
         }
-
-        async function checkStatus() {
-            try {
-                const res = await fetch(`${API}/rabbit/status/${USER}`);
-                const data = await res.json();
-                isClockedIn = data.clocked_in;
-                updateUI(data.status_message);
-            } catch(e) {}
-        }
-
-        function updateUI(statusMsg) {
-            const statusText = document.getElementById('status-text');
-            const statusIcon = document.getElementById('status-icon');
-            const clockBtn = document.getElementById('clockBtn');
-            const clockBtnText = document.getElementById('clockBtnText');
-
-            if (isClockedIn) {
-                // CLOCKED IN STATE
-                statusText.innerHTML = '<span class="text-green-400 text-shadow-green">ACTIVE UPLINK</span>';
-                statusIcon.innerHTML = '<i class="fa-solid fa-satellite-dish text-green-400 fa-beat-fade"></i>';
-                statusIcon.className = "w-12 h-12 rounded-full bg-green-900/30 border border-green-500/50 flex items-center justify-center";
-
-                clockBtn.className = "btn-action glass-panel p-6 rounded-2xl flex flex-col items-center justify-center space-y-2 border-l-4 border-l-red-500 bg-red-900/10 hover:bg-red-900/20";
-                clockBtn.innerHTML = '<i class="fa-solid fa-power-off text-3xl text-red-400 mb-2"></i><span class="font-orbitron text-sm font-bold tracking-wider text-red-200">CLOCK OUT</span>';
-
-            } else {
-                // CLOCKED OUT STATE
-                statusText.innerHTML = '<span class="text-slate-400">STANDBY MODE</span>';
-                statusIcon.innerHTML = '<i class="fa-solid fa-pause text-slate-500"></i>';
-                statusIcon.className = "w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center";
-
-                clockBtn.className = "btn-action glass-panel p-6 rounded-2xl flex flex-col items-center justify-center space-y-2 border-l-4 border-l-cyan-500 hover:bg-cyan-900/10";
-                clockBtn.innerHTML = '<i class="fa-solid fa-fingerprint text-3xl text-cyan-400 mb-2"></i><span class="font-orbitron text-sm font-bold tracking-wider text-cyan-200">CLOCK IN</span>';
-            }
-            log(statusMsg);
-        }
-
-        async function toggleClock() {
-            const jobId = document.getElementById('jobSelector').value;
-            const endpoint = isClockedIn ? '/rabbit/clock-out' : '/rabbit/clock-in';
-            const body = isClockedIn
-                ? { user_id: USER }
-                : { user_id: USER, job_id: jobId, lat: 41.0995, lon: -80.6400 };
-
-            try {
-                const res = await fetch(`${API}${endpoint}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
-                });
-
-                if (res.ok) {
-                    await checkStatus();
-                } else {
-                    const err = await res.json();
-                    alert(err.detail);
-                }
-            } catch(e) { alert("Connection Error"); }
-        }
-
-        async function loadTickets() {
-            try {
-                const res = await fetch(`${API}/panther/tickets`);
-                const tickets = await res.json();
-                const feed = document.getElementById('ticket-feed');
-
-                if (tickets.length === 0) {
-                    feed.innerHTML = '<div class="text-xs text-slate-500 text-center">No active signals.</div>';
-                    return;
-                }
-
-                feed.innerHTML = tickets.map(t => `
-                    <div class="bg-slate-800/50 border border-slate-700 rounded p-3 flex justify-between items-center">
-                        <div>
-                            <div class="text-[0.65rem] font-bold text-purple-400 tracking-wider">${t.id} // ${t.priority}</div>
-                            <div class="text-sm font-bold text-white">${t.customer}</div>
-                            <div class="text-xs text-slate-400 truncate w-40">${t.issue}</div>
-                        </div>
-                        <button class="bg-cyan-900/50 text-cyan-400 border border-cyan-500/30 px-2 py-1 rounded text-xs hover:bg-cyan-500 hover:text-white transition">
-                            VIEW
-                        </button>
-                    </div>
-                `).join('');
-            } catch(e) {}
-        }
-
-        async function submitMaterial() {
-            const sku = document.getElementById('matSku').value;
-            const qty = document.getElementById('matQty').value;
-            const jobId = document.getElementById('jobSelector').value;
-
-            if (!sku || !qty) return;
-
-            try {
-                const res = await fetch(`${API}/rabbit/requisition`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ user_id: USER, job_id: jobId, sku: sku, qty: parseInt(qty) })
-                });
-                if (res.ok) {
-                    closeModal('materialModal');
-                    log(`ORDER TRANSMITTED: ${sku} (x${qty})`);
-                    document.getElementById('matSku').value = '';
-                    document.getElementById('matQty').value = '';
-                }
-            } catch(e) {}
-        }
-
-        // UTILS
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-        function log(msg) {
-            const logs = document.getElementById('logs');
-            logs.innerHTML = `> ${msg} <br> ${logs.innerHTML}`;
+        async function stopMic() {
+            document.getElementById('micBtn').classList.remove('bg-cyan-900/20', 'border-cyan-400');
+            document.getElementById('micIcon').className = "fa-solid fa-microphone text-4xl text-cyan-400";
+            document.getElementById('vStatus').innerText = "Updating Ledger...";
+            // Simulate API Call
+            setTimeout(() => { document.getElementById('vStatus').innerText = "Success ✅"; }, 1000);
+            setTimeout(() => { document.getElementById('vStatus').innerText = "Hold Neural Link"; }, 3000);
         }
     </script>
 </body>
