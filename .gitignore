@@ -1,0 +1,13 @@
+# Python garbage
+__pycache__/
+*.pyc
+
+# Database (Keep local data local)
+just_in_site.db
+
+# VS Code settings
+.vscode/
+
+# Virtual Environments
+venv/
+env/
